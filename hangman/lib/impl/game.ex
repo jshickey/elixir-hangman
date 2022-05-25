@@ -1,13 +1,12 @@
 defmodule Hangman.Impl.Game do
-
   alias Hangman.Type
 
   @type t :: %__MODULE__{
-               turns_left: integer(),
-               game_state: Type.state(),
-               letters: list(String.t()),
-               used: MapSet.t(String.t())
-             }
+          turns_left: integer(),
+          game_state: Type.state(),
+          letters: list(String.t()),
+          used: MapSet.t(String.t())
+        }
 
   defstruct(
     turns_left: 7,
@@ -19,14 +18,15 @@ defmodule Hangman.Impl.Game do
   ##############################################
   @spec new_game() :: t
   def new_game() do
-    new_game(Dictionary.random_word)
+    new_game(Dictionary.random_word())
   end
 
-  @spec new_game(String.t) :: t
+  @spec new_game(String.t()) :: t
   def new_game(word) do
     %__MODULE__{
-      letters: word
-               |> String.codepoints()
+      letters:
+        word
+        |> String.codepoints()
     }
   end
 
@@ -34,7 +34,7 @@ defmodule Hangman.Impl.Game do
   #  def make_move(_game, _guess) do
   #  end
 
-  @spec make_move(Game.t, String.t) :: {Game.t, Type.tally}
+  @spec make_move(Game.t(), String.t()) :: {Game.t(), Type.tally()}
   def make_move(game = %{game_state: state}, _guess)
       when state in [:won, :lost] do
     game
@@ -56,6 +56,7 @@ defmodule Hangman.Impl.Game do
     %{game | used: MapSet.put(game.used, guess)}
     |> score_guess(Enum.member?(game.letters, guess))
   end
+
   ###############################################
   defp score_guess(game, _good_guess = true) do
     # guessed all letters, game is :won
@@ -78,10 +79,11 @@ defmodule Hangman.Impl.Game do
     %{
       turns_left: game.turns_left,
       game_state: game.game_state,
-      letters: [],
-      used: game.used
-            |> MapSet.to_list
-            |> Enum.sort
+      letters: reveal_guessed_letters(game),
+      used:
+        game.used
+        |> MapSet.to_list()
+        |> Enum.sort()
     }
   end
 
@@ -96,5 +98,19 @@ defmodule Hangman.Impl.Game do
 
   defp maybe_won(_all_letters_not_guessed) do
     :good_guess
+  end
+
+  defp reveal_guessed_letters(game) do
+    Enum.map(game.letters, fn letter ->
+      MapSet.member?(game.used, letter)
+      |> maybe_reveal_letter(letter) end)
+  end
+
+  defp maybe_reveal_letter(_good_guess = true, letter) do
+    letter
+  end
+
+  defp maybe_reveal_letter(_bad_guess, letter) do
+    "_"
   end
 end

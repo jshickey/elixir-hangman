@@ -27,5 +27,8 @@
     <orderEntry type="library" name="ex_doc" level="project" />
     <orderEntry type="library" name="credo" level="project" />
     <orderEntry type="library" name="excoveralls" level="project" />
+    <orderEntry type="library" name="mix_test_watch" level="project" />
+    <orderEntry type="library" name="file_system" level="project" />
+    <orderEntry type="library" name="temporary_env" level="project" />
   </component>
 </module>
