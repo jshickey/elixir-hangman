@@ -34,14 +34,14 @@ defmodule Hangman.Impl.Game do
   #  def make_move(_game, _guess) do
   #  end
 
-  @spec make_move(Game.t(), String.t()) :: {Game.t(), Type.tally()}
+  @spec make_move(t, String.t()) :: {t, Type.tally}
   def make_move(game = %{game_state: state}, _guess)
       when state in [:won, :lost] do
     game
     |> return_with_tally()
   end
 
-  def make_move(game = %{game_state: _state}, guess) do
+  def make_move(game, guess) do
     accept_guess(game, guess, MapSet.member?(game.used, guess))
     |> return_with_tally()
   end
@@ -100,18 +100,23 @@ defmodule Hangman.Impl.Game do
   defp reveal_guessed_letters(game = %{game_state: :lost}) do
     game.letters
   end
+#
+#  defp reveal_guessed_letters(game) do
+#    Enum.map(game.letters, fn letter ->
+#      MapSet.member?(game.used, letter)
+#      |> maybe_reveal_letter(letter) end)
+#  end
 
   defp reveal_guessed_letters(game) do
-    Enum.map(game.letters, fn letter ->
-      MapSet.member?(game.used, letter)
-      |> maybe_reveal_letter(letter) end)
+    game.letters
+    |> Enum.map(fn letter -> MapSet.member?(game.used, letter) |> maybe_reveal(letter) end)
   end
 
-  defp maybe_reveal_letter(_good_guess = true, letter) do
+  defp maybe_reveal(_good_guess = true, letter) do
     letter
   end
 
-  defp maybe_reveal_letter(_bad_guess, _letter) do
+  defp maybe_reveal(_bad_guess, _letter) do
     "_"
   end
 end
