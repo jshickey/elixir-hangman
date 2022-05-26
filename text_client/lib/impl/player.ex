@@ -28,7 +28,7 @@ defmodule TextClient.Impl.Player do
     IO.puts current_word(tally)
     tally = Hangman.make_move(game, get_guess())
     interact({game, tally})
-  end
+  end`
 
   def get_guess() do
     IO.gets("Next letter: ")
