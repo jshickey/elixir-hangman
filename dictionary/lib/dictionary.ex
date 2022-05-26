@@ -1,24 +1,13 @@
 defmodule Dictionary do
-  @moduledoc """
-  Documentation for `Dictionary`.
-  """
-  @word_list "assets/words.txt"
-  |> File.read!
-  |> String.split( "\n", trim: true)
 
-  def random_word do
-    @word_list
-    |> Enum.random
-  end
+  alias Dictionary.Impl.WordList
 
-  def swap({a,b}) do
-    {b,a}
-  end
-  def same?({a,a}) do
-    true
-  end
+  @opaque t :: WordList.t
 
-  def same?({_,_}) do
-    false
-  end
+  @spec start() :: t
+  defdelegate start, to: WordList, as: :word_list
+
+  @spec random_word(t) :: String.t
+  defdelegate random_word(word_list), to: WordList
+
 end

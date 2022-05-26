@@ -59,23 +59,20 @@ defmodule Hangman.Impl.Game do
 
   ###############################################
   defp score_guess(game, _good_guess = true) do
-    # guessed all letters, game is :won
     new_state = maybe_won(MapSet.subset?(MapSet.new(game.letters), game.used))
     %{game | game_state: new_state}
   end
 
-  defp score_guess(game = %{turn_left: 1}, _bad_guess) do
-    # turns_left == 1 -> lost | dec turns_left, :bad_guess
-    %{game | game_state: :lost}
+  defp score_guess(game = %{turns_left: 1}, _bad_guess) do
+    %{game | game_state: :lost, turns_left: 0}
   end
 
   defp score_guess(game, _bad_guess) do
-    # turns_left == 1 -> lost | dec turns_left, :bad_guess
     %{game | game_state: :bad_guess, turns_left: game.turns_left - 1}
   end
 
   ###############################################
-  defp tally(game) do
+  def tally(game) do
     %{
       turns_left: game.turns_left,
       game_state: game.game_state,
@@ -100,6 +97,10 @@ defmodule Hangman.Impl.Game do
     :good_guess
   end
 
+  defp reveal_guessed_letters(game = %{game_state: :lost}) do
+    game.letters
+  end
+
   defp reveal_guessed_letters(game) do
     Enum.map(game.letters, fn letter ->
       MapSet.member?(game.used, letter)
@@ -110,7 +111,7 @@ defmodule Hangman.Impl.Game do
     letter
   end
 
-  defp maybe_reveal_letter(_bad_guess, letter) do
+  defp maybe_reveal_letter(_bad_guess, _letter) do
     "_"
   end
 end
