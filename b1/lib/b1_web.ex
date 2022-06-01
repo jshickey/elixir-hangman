@@ -51,6 +51,7 @@ defmodule B1Web do
   end
 
   def live_component do
+    Enum.map
     quote do
       use Phoenix.LiveComponent
 

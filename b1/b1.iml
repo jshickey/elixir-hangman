@@ -71,5 +71,8 @@
     <orderEntry type="library" name="kadabra" level="project" />
     <orderEntry type="library" name="x509" level="project" />
     <orderEntry type="library" name="mime" level="project" />
+    <orderEntry type="library" name="hangman" level="project" />
+    <orderEntry type="library" name="dictionary" level="project" />
+    <orderEntry type="library" name="mix_test_watch" level="project" />
   </component>
 </module>
